@@ -80,7 +80,7 @@ under the License.
             [FROM from_index_name]
             [PROPERTIES ("key"="value", ...)]
 
-            properties: 支持设置超时时间，默认超时时间为1天。
+            properties: 支持设置timeout，默认timeout为1天,超时会取消这个任务。
         例子：
             ADD ROLLUP r1(col1,col2) from r0
     1.2 批量创建 rollup index
@@ -93,7 +93,6 @@ under the License.
     1.3 注意：
             1) 如果没有指定 from_index_name，则默认从 base index 创建
             2) rollup 表中的列必须是 from_index 中已有的列
-            3) 在 properties 中，可以指定存储格式。具体请参阅 CREATE TABLE
             
     2. 删除 rollup index
         语法：
@@ -105,7 +104,6 @@ under the License.
         例子：DROP ROLLUP r1,r2
     2.2 注意：
             1) 不能删除 base index
-            2) 执行 DROP ROLLUP 一段时间内，可以通过 RECOVER 语句恢复被删除的 rollup index。详见 RECOVER 语句
 
             
     schema change 支持如下几种修改方式：
@@ -243,10 +241,9 @@ under the License.
         ADD PARTITION p1 VALUES [("2014-01-01"), ("2014-02-01"));
 
     [rollup]
-    1. 创建 index: example_rollup_index，基于 base index（k1,k2,k3,v1,v2）。列式存储。
+    1. 创建 index: example_rollup_index，基于 base index（k1,k2,k3,v1,v2）。
         ALTER TABLE example_db.my_table
-        ADD ROLLUP example_rollup_index(k1, k3, v1, v2)
-        PROPERTIES("storage_type"="column");
+        ADD ROLLUP example_rollup_index(k1, k3, v1, v2);
         
     2. 创建 index: example_rollup_index2，基于 example_rollup_index（k1,k3,v1,v2）
         ALTER TABLE example_db.my_table
@@ -256,7 +253,7 @@ under the License.
     3. 创建 index: example_rollup_index3, 基于 base index (k1,k2,k3,v1), 自定义 rollup 超时时间一小时。
         ALTER TABLE example_db.my_table
         ADD ROLLUP example_rollup_index(k1, k3, v1)
-        PROPERTIES("storage_type"="column", "timeout" = "3600");
+        PROPERTIES("timeout" = "3600");
 
     4. 删除 index: example_rollup_index2
         ALTER TABLE example_db.my_table
